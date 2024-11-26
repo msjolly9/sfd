@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Christmas Parade Countdown</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <style>
+        .countdown-container {
+            width: 100%;
+            max-width: 28rem;
+            margin: 0 auto;
+            background-color: #ecfdf5;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+        .time-block {
+            display: flex;
+            flex-direction: column;
+        }
+        .number {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #991b1b;
+        }
+        .label {
+            font-size: 0.875rem;
+            color: #991b1b;
+        }
+        .title {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div id="countdown-root"></div>
+    <script>
+        const CountdownTimer = () => {
+            const [timeLeft, setTimeLeft] = React.useState({
+                days: 0,
+                hours: 0,
+                minutes: 0,
+                seconds: 0
+            });
+
+            React.useEffect(() => {
+                const targetDate = new Date('December 21, 2024 17:00:00').getTime();
+
+                const timer = setInterval(() => {
+                    const now = new Date().getTime();
+                    const difference = targetDate - now;
+
+                    if (difference <= 0) {
+                        clearInterval(timer);
+                        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                        return;
+                    }
+
+                    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                    setTimeLeft({ days, hours, minutes, seconds });
+                }, 1000);
+
+                return () => clearInterval(timer);
+            }, []);
+
+            return React.createElement('div', { className: 'countdown-container' },
+                React.createElement('div', { className: 'countdown-grid' },
+                    Object.entries(timeLeft).map(([key, value]) =>
+                        React.createElement('div', { key, className: 'time-block' },
+                            React.createElement('span', { className: 'number' }, value),
+                            React.createElement('span', { className: 'label' }, key.charAt(0).toUpperCase() + key.slice(1))
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'title' }, '2024 Christmas Parade Countdown')
+            );
+        };
+
+        ReactDOM.render(
+            React.createElement(CountdownTimer),
+            document.getElementById('countdown-root')
+        );
+    </script>
+</body>
+</html>
